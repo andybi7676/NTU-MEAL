@@ -1,7 +1,7 @@
 import React from 'react';
 import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
-import { Login, Register, AutoLogin, Welcome, MainPage } from '../components';
+import { Navbar, Login, Register, AutoLogin, Welcome, MainPage } from '../components';
 // import { 
 
 // } from '../containers';
@@ -18,9 +18,10 @@ const mustLogin = (hasLoggedIn, Tag) => {
 function App({hasLoggedIn}) {
 
   return (
-    <div style={{display: "flex", flexDirection: "column", alignItems: "center"}}>
+    // <div style={{display: "flex", flexDirection: "column", alignItems: "center"}}>
+    <div style={{ display: "flex", flexDirection: "column"}}>
       <BrowserRouter>
-        {/* <NavBar /> */}
+        <Navbar />
         <Switch>
           <Route exact path="/">
             {/*hasLoggedIn?

@@ -4,8 +4,7 @@ import { Icon, Header } from 'semantic-ui-react';
 
 const divStyle = {
   marginTop: "2em",
-  width: "50%",
-  maxWidth: "800px",
+  width: "100%",
   display: "flex",
   flexDirection: "column",
   alignItems: "center"

@@ -11,7 +11,7 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = { login };
 const timeout = 1000;
 
-const LoginForm = ({hasLoggedIn, login}) => {
+const Login = ({hasLoggedIn, login}) => {
   const [connection, loginAPI] = useLogin();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -50,7 +50,7 @@ const LoginForm = ({hasLoggedIn, login}) => {
   return (
     <Grid textAlign="center" style={{ width: "100%", marginTop: "2vh"}}>
       <Grid.Column style={{ width: "80%", maxWidth: "30em" }}>
-        <Header as='h2' icon textAlign='center'>
+        <Header as='h2' icon textAlign='center' color='blue'>
           <Icon name='user circle' />
           <Header.Content>Login</Header.Content>
         </Header>
@@ -66,7 +66,6 @@ const LoginForm = ({hasLoggedIn, login}) => {
           :
           null
         }
-        <Divider horizontal>OR Manually Login</Divider>
         <Form
           onSubmit={e => {
             e.preventDefault();
@@ -77,9 +76,9 @@ const LoginForm = ({hasLoggedIn, login}) => {
           <Form.Input icon='lock' iconPosition='left' type="password" placeholder="Your password"   required={true} id="userPassword" onChange={e => {setPassword(e.target.value)}} />
           <Button color="green" type='submit'>Login</Button>
         </Form>
-        </Grid.Column>
+      </Grid.Column>
     </Grid>
   )
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(LoginForm);
+export default connect(mapStateToProps, mapDispatchToProps)(Login);
