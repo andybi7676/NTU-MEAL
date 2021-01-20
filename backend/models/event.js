@@ -1,19 +1,23 @@
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
-
+//admin, region, name, location, date, begin, end, amount, description 
 const EventSchema = new Schema({
   admin: {
     type: Schema.Types.ObjectId,
     ref: 'User',
     required: true
   },
+  region: {
+    type: String,
+    required: true
+  },
   name: {
     type: String,
     required: true
   },
-  description: {
+  location: {
     type: String,
-    required: false
+    required: true
   },
   date: {
     type: String, 
@@ -27,26 +31,14 @@ const EventSchema = new Schema({
     type: Number,
     required: true
   },
-  participant: {
-    type: [{ type: Schema.Types.ObjectId, ref: 'Record' }],
-    required: true
-  },
-  papers: {
-    type: [{ type: Schema.Types.ObjectId, ref: 'Paper' }],
-    required: true
-  },
-  reward: {
+  amount: {
     type: Number,
     required: true
   },
-  password: {
+  description: {
     type: String,
     required: false
   },
-  period: {
-    type: Number,
-    required: true
-  }
 });
 
 // Creating a table within database with the defined schema

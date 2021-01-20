@@ -1,8 +1,7 @@
 import React, { useState, useRef } from 'react';
-import { useSelector } from 'react-redux';
 import { Header, Icon, Divider, Image, Segment, Container, Grid, Label, Menu, Sticky } from 'semantic-ui-react';
-import { BACKEND } from '../../config';
-import { useAPI } from '../../hooks';
+import MainPageContent from './Content/MainPageContent';
+
 
 const MainPage = () => {
   const contextRef = useRef(null);
@@ -73,33 +72,7 @@ const MainPage = () => {
       <Divider vertical />
       <Grid.Column stretched width={12}>
         <Segment>
-          This is an stretched grid column. This segment will always match the
-          tab height
-          <h1>something</h1>
-          <h1>something</h1>
-          <h1>something</h1>
-          <h1>something</h1>
-          <h1>something</h1>
-          <h1>something</h1>
-          <h1>something</h1>
-          <h1>something</h1>
-          <h1>something</h1>
-          <h1>something</h1>
-          <h1>something</h1>
-          <h1>something</h1>
-          <h1>something</h1>
-          <h1>something</h1>
-          <h1>something</h1>
-          <h1>something</h1>
-          <h1>something</h1>
-          <h1>something</h1>
-          <h1>something</h1>
-          <h1>something</h1>
-          <h1>something</h1>
-          <h1>something</h1>
-          <h1>something</h1>
-          <h1>something</h1>
-          <h1>something</h1>
+          <MainPageContent selection={activeItem} />
         </Segment>
       </Grid.Column>
       </Grid.Row>

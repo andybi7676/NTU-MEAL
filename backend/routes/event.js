@@ -6,6 +6,68 @@ const mongoose = require("mongoose");
 const fs = require("fs").promises;
 // const path = require("path");
 
+router.post('/', async (req, res) => {
+  console.log(`recieve create event request`);
+  let d = new Date();
+
+  if (!req.isLogin) {
+    console.log(`[${d.toLocaleDateString()}, ${d.toLocaleTimeString()}] Create event failed: Not login`);
+    res.status(401).send("Not logged in");
+    return;
+  }
+
+  const { admin, region, name, location, date, begin, end, amount, description } = req.body;
+  // let admin = req.user.id;
+  if (!admin || !region || !name || !location || !date || !begin || !end || !amount ) {
+    res.status(400).send("Missing field");
+    return;
+  }
+  
+  if (req.user.id !== admin) {
+    res.status(401).send("Operation not allowed");
+    return;
+  }
+
+  const userAdmin = await User.findById(admin, (err, usr) => {
+    if(err) return null;
+    if(usr) return usr;
+  });
+
+  if(userAdmin === null) {
+    res.status(404).send("User not found!");
+    return;
+  }
+
+  const exists = await Event.findOne({ name }, (err, event) => {
+    if (event) return true;
+    else if (err) {
+      errHandler(err, res);
+      return true;
+    }
+    return false;
+  })
+  if (exists) {
+    res.status(400).send("Event name already exists");
+    return;
+  }
+
+  const newEvent = Event({ admin: userAdmin, region, name, location, date, begin, end, amount, description });
+  const done = newEvent.save()
+    .then(_ => true)
+    .catch(err => errHandler(err, res));
+
+  if (done) {
+    let d = new Date();
+    console.log(`[${d.toLocaleDateString()}, ${d.toLocaleTimeString()}] Create Event success: ${name} by ${req.user.name}`);
+    res.status(200).send("Create event success");
+  }
+  else return;
+})
+
+router.get('/all', async (req, res) => {
+  console.log(`recieve get all request, by: `, req.user);
+}) 
+
 // const updateLikes = async (io, paperId) => {
 //   const likes = await Like.find({ paper: paperId })
 //   .then(likes => likes)
