@@ -113,8 +113,6 @@ router.get('/all', async (req, res) => {
   else {
     res.status(500).send("Query like state failed");
   }
-
-  res.status(200).send(events);
   return;
 });
 
@@ -159,8 +157,12 @@ router.get('/single', async (req, res) => {
         }
       ))
       .catch(err => errHandler(err, res))
-  
-  res.status(200).send(singleLikeResponse);
+  if(singleLikeResponse) {
+    res.status(200).send({ ...singleLikeResponse });
+  }
+  else {
+    res.status(404).send("Like response not found");
+  }
   return;
 });
 
