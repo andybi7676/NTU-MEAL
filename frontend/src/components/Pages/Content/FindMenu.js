@@ -22,7 +22,8 @@ const FindMenu = ({ region, connection }) => {
   const [ reconn, reconnect ] = useAPI('json');
   const [events, setEvents] = useState(response);
 
-  const refresh = (evtId) => {
+  const refresh = (evtId, _source) => {
+    console.log(_source);
     reconnect(
       BACKEND + `/event/single?id=${evtId}`,
       "GET",
@@ -60,7 +61,7 @@ const FindMenu = ({ region, connection }) => {
           return (
               <Card key={`${region}-${idx}`} color={regionColor[region]}>
                 <Card.Content>
-                  <Button icon floated='right' basic color={regionColor[region]} onClick={() => refresh(evt._id)}>
+                  <Button icon floated='right' basic color={regionColor[region]} onClick={() => refresh(evt._id, `${region}-${idx}`)}>
                     <Icon name='refresh' />
                   </Button>
                   <Card.Header>{evt.name}</Card.Header>

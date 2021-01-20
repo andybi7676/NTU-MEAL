@@ -4,6 +4,7 @@ import { useAPI } from '../../../hooks';
 import { useSelector } from 'react-redux';
 import FindMap from './FindMap';
 import FindMenu from './FindMenu';
+import FindMine from './FindMine';
 import { BACKEND } from '../../../config';
 
 const regionAry = ["ALL", "E", "N", "M", "S", "SE", "W", "CZ"];
@@ -64,12 +65,22 @@ const Find = () => {
             />
           ))
         }
+        <Menu.Menu position='right'>
+          <Menu.Item
+            name='MINE'
+            active={selection === 'MINE'}
+            onClick={() => select("MINE")}
+          />
+        </Menu.Menu>
       </Menu>
       {
         selection === 'MAP'?
         <Segment color={regionColor[selection]}>
           <FindMap select={select} />
         </Segment>
+        :
+        selection === 'MINE'?
+        <FindMine />
         :
         <FindMenu region={selection}  connection={connection} />
       }

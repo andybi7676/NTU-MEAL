@@ -4,6 +4,7 @@ const Event = require("../models/event");
 const User = require("../models/user");
 const mongoose = require("mongoose");
 const fs = require("fs").promises;
+const { findById } = require("../models/event");
 // const path = require("path");
 
 router.post('/', async (req, res) => {
@@ -65,7 +66,7 @@ router.post('/', async (req, res) => {
 })
 
 router.get('/all', async (req, res) => {
-  console.log(`recieve get all request, by: `, req.user);
+  // console.log(`recieve get all request, by: `, req.user);
   if (!req.isLogin) {
     let d = new Date();
     console.log(`[${d.toLocaleDateString()}, ${d.toLocaleTimeString()}] Get events failed: Not login`);
@@ -85,7 +86,7 @@ router.get('/all', async (req, res) => {
 });
 
 router.get('/single', async (req, res) => {
-  console.log(`Recieve get single request: `, req.query, req.user);
+  // console.log(`Recieve get single request: `, req.query, req.user);
   if(!req.isLogin) {
     let d = new Date();
     console.log(`[${d.toLocaleDateString()}, ${d.toLocaleTimeString()}] Refresh event failed: Not login`);
@@ -108,6 +109,97 @@ router.get('/single', async (req, res) => {
     .catch(_ => false);
   const { _id, region, name, location, date, begin, end, amount, description } = event;
   res.status(200).send({ _id, region, name, location, date, begin, end, amount, description });
+  return;
+});
+
+router.get('/mine', async (req, res) => {
+  if(!req.isLogin) {
+    let d = new Date();
+    console.log(`[${d.toLocaleDateString()}, ${d.toLocaleTimeString()}] Get owner events failed: Not login`);
+    res.status(401).send("Not logged in");
+    return;
+  }
+
+  const admin = req.user.id
+  const user = await User.findById(admin)
+    .then(usr => usr?usr:false)
+    .catch(err => console.error(err));
+
+  if(!user) {
+    res.status(404).send("User not found !");
+  }
+
+  const events = await Event.find({admin: user}, (err, events) => {
+    if(err) console.error(err) 
+    return events;
+  });
+
+  res.status(200).send(events);
+  return;
+});
+
+router.post('/delete', async (req, res) => {
+  console.log(`Get delete req: `, req.query, req.user);
+  if(!req.isLogin) {
+    let d = new Date();
+    console.log(`[${d.toLocaleDateString()}, ${d.toLocaleTimeString()}] Delete event failed: Not login`);
+    res.status(401).send("Not logged in");
+    return;
+  }
+
+  const evtId = req.query.id;
+
+  // .populate({
+  //   path: 'admin',
+  //   select: '_id'
+  // })
+  const event = await Event.findById(evtId)
+    .then(evt => evt?evt:false)
+    .catch(err => console.error(err));
+  console.log(event);
+  const adminId = event.admin;
+  console.log(`${adminId}`);
+  if(!event || `${adminId}` !== req.user.id ) {
+    res.status(401).send({error: "Not authorized!"});
+    return;
+  }
+
+  const delEvt = await Event.findOneAndDelete({ _id: evtId })
+    .then(evt => evt?evt:false)
+    .catch(err => console.error(err));
+  
+  console.log(delEvt);
+
+  res.status(200).send({delete: true });
+  return;
+});
+
+router.post('/revise', async (req, res) => {
+  console.log(`Get delete req: `, req.query, req.user, req.body);
+  if(!req.isLogin) {
+    let d = new Date();
+    console.log(`[${d.toLocaleDateString()}, ${d.toLocaleTimeString()}] Get owner events failed: Not login`);
+    res.status(401).send("Not logged in");
+    return;
+  }
+
+  const evtId = req.query.id;
+  const user = await User.findById(req.user.id)
+    .then(usr => usr?usr:false)
+    .catch(err => console.error(err));
+  if(!user) {
+    res.status(400).send("User not found");
+  }
+  const newAmount = req.body.amount;
+
+  const filter = {
+    _id: evtId,
+    admin: user,
+  }
+
+  await Event.updateOne(filter, { amount: newAmount });
+
+  res.status(200).send({revise: true });
   return;
 });
 
