@@ -70,7 +70,7 @@ const MainPage = () => {
         </Sticky>
       </Grid.Column>
       <Divider vertical />
-      <Grid.Column stretched width={12}>
+      <Grid.Column stretched width={12} >
         <Segment>
           <MainPageContent selection={activeItem} />
         </Segment>

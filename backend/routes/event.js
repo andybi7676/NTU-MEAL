@@ -66,7 +66,50 @@ router.post('/', async (req, res) => {
 
 router.get('/all', async (req, res) => {
   console.log(`recieve get all request, by: `, req.user);
-}) 
+  if (!req.isLogin) {
+    let d = new Date();
+    console.log(`[${d.toLocaleDateString()}, ${d.toLocaleTimeString()}] Get events failed: Not login`);
+    res.status(401).send("Not logged in");
+    return;
+  }
+  if (!req.user || !req.user.id) {
+    res._destroy(400).send("Missing field");
+    return;
+  }
+  const events = await Event.find({}, (err, events) => {
+    if(err) console.error(err);
+    else return events;
+  })
+  res.status(200).send(events);
+  return;
+});
+
+router.get('/single', async (req, res) => {
+  console.log(`Recieve get single request: `, req.query, req.user);
+  if(!req.isLogin) {
+    let d = new Date();
+    console.log(`[${d.toLocaleDateString()}, ${d.toLocaleTimeString()}] Refresh event failed: Not login`);
+    res.status(401).send("Not logged in");
+    return;
+  }
+
+  const evtId = req.query.id;
+  const usrId = req.user.id;
+  const usrExst = await User.findById(usrId)
+    .then(usr => usr?true:false)
+    .catch(_ => false);
+  if(!usrExst) {
+    res.status(404).send("Request User not found!");
+    return;
+  }
+
+  const event = await Event.findById(evtId)
+    .then(event => event ? event : false)
+    .catch(_ => false);
+  const { _id, region, name, location, date, begin, end, amount, description } = event;
+  res.status(200).send({ _id, region, name, location, date, begin, end, amount, description });
+  return;
+});
 
 // const updateLikes = async (io, paperId) => {
 //   const likes = await Like.find({ paper: paperId })
