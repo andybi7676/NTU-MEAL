@@ -3,6 +3,7 @@ import { Icon, Message, Segment, Image, Button, Card } from 'semantic-ui-react';
 import { useSelector } from 'react-redux';
 import { useAPI } from '../../../hooks';
 import { BACKEND } from '../../../config';
+import Like from './Like';
 
 const regionColor = {
   "MAP":'grey',
@@ -35,10 +36,10 @@ const FindMenu = ({ region, connection }) => {
   useEffect(() => {
     if(reconn.success) {
       console.log(reconn);
-      const { _id, name, region, location, date, begin, end, amount, description } = reconn.response;
+      const { _id, name, region, location, date, begin, end, amount, description, totalLikes, likeState } = reconn.response;
       const newEvents = events.map((evt, idx) => {
         if(evt._id === _id) {
-          return { _id, name, region, location, date, begin, end, amount, description };
+          return { _id, name, region, location, date, begin, end, amount, description, totalLikes, likeState };
         }
         return evt;
       })
@@ -75,6 +76,8 @@ const FindMenu = ({ region, connection }) => {
                   </Card.Description>
                 </Card.Content>
                 <Card.Content extra>
+                  <Like  totalLikes={evt.totalLikes} likeState={evt.likeState} evtId={evt._id} />
+                  {/* <Icon name='thumbs up outline' size='tiny' style={{padding: "10px", borderBottom: "10px"}} />{10}
                   <div className='ui two buttons'>
                     <Button basic color='green'>
                       Approve
@@ -82,7 +85,7 @@ const FindMenu = ({ region, connection }) => {
                     <Button basic color='red'>
                       Decline
                     </Button>
-                  </div>
+                  </div> */}
                 </Card.Content>
               </Card>
           );

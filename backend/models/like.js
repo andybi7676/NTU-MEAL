@@ -12,11 +12,6 @@ const LikeSchema = new Schema({
     ref: 'Event',
     required: true
   },
-  paper: {
-    type: Schema.Types.ObjectId,
-    ref: 'Paper',
-    required: true
-  },
   state: {
     type: Number,
     required: true

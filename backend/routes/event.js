@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const Event = require("../models/event");
 const User = require("../models/user");
+const Like = require("../models/like");
 const mongoose = require("mongoose");
 const fs = require("fs").promises;
 const { findById } = require("../models/event");
@@ -81,6 +82,38 @@ router.get('/all', async (req, res) => {
     if(err) console.error(err);
     else return events;
   })
+
+  // const papers = [...event.papers];
+
+  const likeResponse = (_userId, likes) => {
+    let likeState = 0;
+    const totalLikes = likes.reduce((sum, current) => {
+      if (current.user == _userId) likeState = current.state;
+      return (sum + current.state);
+    }, 0);
+    return { likeState, totalLikes };
+  };
+
+  const likeResponseAry = await Promise.all(events.map(async event => {
+    const { _id, region, name, location, date, begin, end, amount, description } = event;
+    const userId = req.user.id;
+    return await Like.find({ event: event._id })
+      .then(likes => (
+        {
+          ...likeResponse(userId, likes),
+          _id, region, name, location, date, begin, end, amount, description,
+        }
+      ))
+      .catch(err => errHandler(err, res))
+  }))
+
+  if (likeResponseAry.length === events.length) {
+    res.status(200).send(likeResponseAry);
+  }
+  else {
+    res.status(500).send("Query like state failed");
+  }
+
   res.status(200).send(events);
   return;
 });
@@ -107,8 +140,27 @@ router.get('/single', async (req, res) => {
   const event = await Event.findById(evtId)
     .then(event => event ? event : false)
     .catch(_ => false);
+
+  const likeResponse = (_userId, likes) => {
+    let likeState = 0;
+    const totalLikes = likes.reduce((sum, current) => {
+      if (current.user == _userId) likeState = current.state;
+      return (sum + current.state);
+    }, 0);
+    return { likeState, totalLikes };
+  };
+
   const { _id, region, name, location, date, begin, end, amount, description } = event;
-  res.status(200).send({ _id, region, name, location, date, begin, end, amount, description });
+  const singleLikeResponse = await Like.find({ event: event._id })
+      .then(likes => (
+        {
+          ...likeResponse(usrId, likes),
+          _id, region, name, location, date, begin, end, amount, description,
+        }
+      ))
+      .catch(err => errHandler(err, res))
+  
+  res.status(200).send(singleLikeResponse);
   return;
 });
 
@@ -202,6 +254,53 @@ router.post('/revise', async (req, res) => {
   res.status(200).send({revise: true });
   return;
 });
+
+router.post('/like', async (req, res) => {
+  let d = new Date();
+  if (!req.isLogin) {
+    console.log(`[${d.toLocaleDateString()}, ${d.toLocaleTimeString()}] Like or dislike failed: Not login`);
+    res.status(401).send("Not logged in");
+    return;
+  }
+
+  let { evtId, likeState } = req.body;
+  if (likeState > 1) {
+    likeState = 1;
+  }
+  else if (likeState < -1) {
+    likeState = -1;
+  }
+  const usrId = req.user.id;
+  if (!evtId || !usrId) {
+    res.status(400).send("Missing field!");
+    return;
+  }
+
+  const event = await Event.findById(evtId)
+    .then(event => event ? event : false)
+    .catch(err => console.error(err));
+  if(!event) {
+    res.status(400).send("Event not found!");
+    return;
+  }
+
+  const filter = {
+    user: usrId,
+    event: evtId,
+  };
+
+  const upserted = await Like.updateOne(filter, { state: likeState, timestamp: d.getTime() }, {
+    new: true, upsert: true
+  })
+    .then(doc => doc.upserted)
+    .catch(err => errHandler(err));
+  if(upserted) {
+    console.log("New like created!");
+  }
+
+  res.status(200).send({ id: usrId, event: evtId, likeState });
+  // updateLikes(req.app.get('io'), paperId);
+})
 
 // const updateLikes = async (io, paperId) => {
 //   const likes = await Like.find({ paper: paperId })
