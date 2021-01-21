@@ -1,11 +1,18 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
+const path = require('path');
 const cors = require('cors');
 require('dotenv').config();
 
+
 // Create server to serve index.html
 const app = express();
+app.use(express.static(path.join(__dirname, 'build')));
+// app.get('/', function (req, res) {
+app.get('/*', function (req, res) {
+  res.sendFile(path.join(__dirname, 'build', 'index.html'));
+});
 const http = require('http').Server(app);
 // const io = require('socket.io')(http);
 const port = process.env.PORT || 3001;
