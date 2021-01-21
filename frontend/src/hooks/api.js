@@ -49,7 +49,7 @@ export default (responseType, onSuccess, onError) => {
 
   const connect = async (url, method, body, headers) => {
     dispatch({type: "CONNECT"});
-    fetch(url, { mode: 'no-cors', method, body, headers })
+    fetch(url, { method, body, headers })
     .then(res => {
       if(res.status !== 200){
         res.text()
