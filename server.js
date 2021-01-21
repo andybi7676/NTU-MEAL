@@ -8,7 +8,8 @@ require('dotenv').config();
 const app = express();
 const http = require('http').Server(app);
 // const io = require('socket.io')(http);
-const port = process.env.PORT || 3001;
+const port = process.env.PORT || 80;
+// const port = process.env.PORT || 3001;
 
 // Connect to mongo
 const mongoUrl = process.env.DB_URL;
