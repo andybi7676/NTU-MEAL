@@ -37,7 +37,7 @@ const pushRoute = require('./routes/push');
 // setSocketIO(io);
 
 // Routing
-app.use(cors());
+// app.use(cors());
 app.use(bodyParser.json());
 app.use(verifyToken);
 app.use('/auth', authRoute);
