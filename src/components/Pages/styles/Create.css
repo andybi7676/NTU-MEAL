@@ -1,0 +1,22 @@
+.flex_div {
+  /* height: 500px; */
+  display: flex;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.inline_div {
+  display: inline-block;
+  position: relative;
+  /* flex-direction: row-reverse; */
+  width: 2000px;
+  z-index: 0;
+  cursor: grab;
+}
+
+.background_img {
+  pointer-events: none;
+  object-fit: scale-down;
+  width: 1200px;
+  z-index: -1;
+}
