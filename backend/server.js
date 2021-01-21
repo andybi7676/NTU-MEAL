@@ -15,7 +15,7 @@ app.get('/*', function (req, res) {
 });
 const http = require('http').Server(app);
 // const io = require('socket.io')(http);
-const port = process.env.PORT || 3001;
+const port = process.env.PORT || 80;
 
 // Connect to mongo
 const mongoUrl = process.env.DB_URL;
