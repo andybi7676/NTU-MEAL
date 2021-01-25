@@ -1,2 +1,0 @@
-.flex_div{display:flex;justify-content:center;overflow:hidden}.inline_div{display:inline-block;position:relative;width:2000px;z-index:0;cursor:-webkit-grab;cursor:grab}.background_img{pointer-events:none;object-fit:scale-down;width:1200px;z-index:-1}.circle_div{display:flex;align-items:center;height:50px;width:50px;border-radius:50%;z-index:2;cursor:pointer;overflow:visible;transition:.5s ease-out;background:hsla(0,0%,100%,.5);position:absolute}.circle_div:hover{background:hsla(0,0%,100%,0);color:#fff}
-/*# sourceMappingURL=main.aebde917.chunk.css.map */
